@@ -1,0 +1,72 @@
+\documentclass[12pt]{article}
+\usepackage{algorithm,algpseudocode}
+
+\title{}
+\author{\textsc{CS F364: Design \& Analysis of Algorithms}
+\\
+Lec 28, BITS Pilani}
+\date{}
+
+\begin{document}
+\maketitle
+
+\paragraph{}
+By weak duality theorem, for any feasible dual solutions:
+\\
+$$\sum_{i=1}^{n}y_i \leq Z_{LP}^{*} \leq OPT$$
+\\
+Let $y^{*}$ be an optional solution to the dual LP, and consider the solution in which we choose all subsets for which the corresponding dual inequality is tight, that is the inequality is met with equality for subset $S_j: \sum_{i:e_i \in S_j}^{}y_i^{*} = W_j$. Let $I^{'}$ denote the index of the subsets in this solution. we will prove that this algorithm also is an f-approximation algorithm for the set cover problem.
+\\
+\\
+The collection of subsets $S_j, j \in I^{'}$, is a set cover. Suppose that there exits some uncovered element $e_k$. Then for each subset $S_j$ containing $e_k$, it must be the case that $\sum_{i:e_i \in S_j}^{}y_i^{*} < W_j$.
+\\
+\\
+Let $\in$ be the smallest difference between the RHS and LHS of all constraints involving $e_k$; that is,
+$$\in = \min_{j:e_k \in S_j}^{}(W_j - \sum_{i:e_i \in S_j}^{}y_i^{*})$$ 
+\\
+we have $\in > 0 $.
+\\
+Consider now a new dual solution $y^{'}$ in which $y_k^{'} = y_k^{*} + \in$ and every other component $y^{'}$ is the same as in $y^{*}$. Then $y^{'}$ is a dual feasible solution since for each $j$ such that $e_k \in S_j$:
+$$\sum_{i:e_i \in S_j}^{}y_i^{'} = \sum_{i:e_i \in S_j}^{}y_i^{*} + \in \quad \leq W_j$$ by the definition of $\in$.
+\\
+\\
+For each $j$ such that $e_k \notin S_j$:
+$$\sum_{i:e_i \in S_j}^{}y_i^{'} = \sum_{i:e_i \in S_j}^{}y_i^{*} + \leq W_j$$ as before.
+\\
+Furthermore, $$\sum_{i=1}^{n}y_i^{'} > \sum_{i=1}^{n}y_i^{*}$$ which contradicts the optimality of $y^{*}$. Thus, it must be the case that all elements are covered and $I'$ is a set cover. The dual rounding algorithm is an f-approximation algorithm for the set cover problem.\\
+
+$$j \in I^{'} \Leftrightarrow W_j = \sum_{i:e_i \in S_j}^{}y_i^{*}$$
+\\
+$$\sum_{j \in I^{'}}^{}W_j = \sum_{j \in I^{'}}^{} \sum_{i:e_i \in S_j}^{}y_i^{*}$$
+\\
+$$= \sum_{i=1}^{n} |{j \in I^{'}: e_j \in S_j}| * y_i^{*}$$
+\\
+$$\leq \sum_{i=1}^{n} f_i y_i^{*}$$
+\\
+$$\leq f \sum_{i=1}^{n} y_i^{*}$$
+\\
+$$\leq f * OPT$$
+\\
+$$\Rightarrow (\sum_{j \in I^{'}}^{} W_j)/OPT \leq f$$
+\\
+This algorithm is called \textbf{dual rounding} algorithm for set cover.
+
+\paragraph{The Primal-Dual Algorithm for set cover:} The previous two algorithms for set cover(primal rounding and dual rounding) require solving a LP. In the dual rounding algorithm, the optimal dual solution is a lower bound for OPT. Any feasible dual solution is also a lower bound for $OPT: \sum_{i=1}^{n} y_i \leq OPT$ for any feasible dual solution. If we construct our set cover using the method of dual rounding algorithm: $j \in I^{'} \Leftrightarrow \sum_{i:e_i \in S_j}^{}y_i = W_j$ and $I'$ is a set cover, then we can easily show that this will a gain give an \textbf{f-approximation algorithm for set cover}(using the some set of inequalities as in the case of dual rounding algorithm). This is example of a primal-dual algorithm in which we are not required to solve the dual LP. Primal-dual algorithms start with a dual feasible solution, and use dual information to infer a primal, possible infeasible, solution. If the primal solution is indeed infeasible, the dual solution is modified to increase the value of the dual objective function.
+\\
+\\
+
+\begin{algorithm}
+\caption{Primal-dual Algorithm:}
+\label{pseudoPSO}
+\begin{algorithmic}[1]
+\State $y \leftarrow 0$
+\State $I \leftarrow d$
+\While{there exists $e_i \notin \bigcup\limits_{j \in I}^{} S_j$ }
+\State Increase the dual variable $y_i$ until there is some $l$ with $e_i \in S_l$ such that $\sum_{j:e_j \in S_l}^{} y_j = W_l$
+\State $I \leftarrow I \cup \{l\}$
+\EndWhile
+\end{algorithmic}
+\end{algorithm}
+
+
+\end{document}
